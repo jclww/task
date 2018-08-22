@@ -32,3 +32,5 @@ node_modules
 *.iws
 *.iml
 *.ipr
+
+*/target/*
