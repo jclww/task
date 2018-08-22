@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lww.sparrow.task.dal.JobInfoMapper">
+
+    <sql id="baseColumn">
+        id,
+        business_name as businessName,
+        name,
+--         job_type as jobType,
+        ext_config as extConfig,
+        shell_exe_user as shellExeUser,
+        time_expression as timeExpression,
+        running_model as runningModel,
+        executor_ips as executorIps,
+        executor_num as executorNum,
+        app_shell as appShell,
+
+        execute_date as executeDate,
+        need_result as needResult,
+        is_valid as isValid,
+        create_date as createDate,
+        modify_date as modifyDate,
+        retry_count as retryCount,
+        job_owner as jobOwner,
+        department,
+        alarm,
+        reentrant,
+        alarm_users as alarmUsers,
+        `desc`
+    </sql>
+
+    <!-- insert -->
+    <insert id="insert" parameterType="JobInfo">
+  	<![CDATA[
+	  	INSERT INTO job_info(
+	  		job_owner, department, business_name, name, job_type,
+	  		ext_config,
+	  		shell_exe_user, time_expression, running_model, executor_ips,
+	  		executor_num, app_shell, execute_date, need_result, is_valid,
+	  		create_date, modify_date, retry_count, alarm, reentrant, alarm_users, `desc`
+	  	)VALUES(
+	  		#{jobOwner}, #{department}, #{businessName}, #{name}, #{jobType},
+	  		#{extConfig},
+	  		#{shellExeUser}, #{timeExpression}, #{runningModel}, #{executorIps},
+	  		#{executorNum}, #{appShell}, #{executeDate}, #{needResult}, #{isValid},
+	  		now(), now(), 0, #{alarm}, #{reentrant}, #{alarmUsers}, #{desc}
+	  	)
+  	]]>
+        <selectKey resultType="long" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+    </insert>
+
+    <!-- update -->
+    <update id="updateDateAndRetryById">
+        UPDATE job_info
+        SET execute_date=#{executeDate}, retry_count=#{retryCount}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateIsValidById">
+        UPDATE job_info
+        SET is_valid = #{isValid}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateOwnerAndDeptById">
+        UPDATE job_info
+        SET job_owner = #{jobOwner}, department = #{department}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateOwnerById">
+        UPDATE job_info
+        SET job_owner = #{jobOwner}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateDeptById">
+        UPDATE job_info
+        SET department = #{department}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateById" parameterType="JobInfo">
+        UPDATE job_info SET
+        business_name = #{businessName},
+        name = #{name},
+        time_expression = #{timeExpression},
+        is_valid = #{isValid},
+        `desc` = #{desc},
+        job_type = #{jobType},
+        ext_config = #{extConfig},
+        job_owner = #{jobOwner},
+        execute_date=#{executeDate},
+        modify_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateAllColumnById" parameterType="JobInfo">
+        UPDATE job_info
+        SET
+        business_name = #{businessName},
+        name = #{name},
+        shell_exe_user = #{shellExeUser},
+        time_expression = #{timeExpression},
+        running_model = #{runningModel},
+        executor_ips = #{executorIps},
+        executor_num = #{executorNum},
+        app_shell = #{appShell},
+        execute_date = #{executeDate},
+        need_result = #{needResult},
+        is_valid = #{isValid},
+        alarm = #{alarm},
+        reentrant = #{reentrant},
+        alarm_users = #{alarmUsers},
+        `desc` = #{desc},
+        modify_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <!-- select -->
+    <select id="getById" parameterType="long" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+    </select>
+
+    <select id="findByApp" parameterType="String" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE business_name = #{app}
+    </select>
+
+    <select id="findByOwner" parameterType="String" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE job_owner = #{username}
+    </select>
+
+    <select id="queryByUntilDateAndBatch" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE execute_date<![CDATA[<=]]>#{untilDate}
+        AND is_valid=1
+        LIMIT #{limit}
+    </select>
+
+    <select id="queryRecentlyExecuteDate" parameterType="date" resultType="date">
+        SELECT execute_date
+        FROM job_info
+        WHERE execute_date<![CDATA[>]]>#{startDate}
+        AND is_valid=1
+        ORDER BY execute_date
+        LIMIT 1
+    </select>
+
+    <select id="queryJobInfoForWeb" parameterType="java.util.Map" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE 1 = 1
+        <if test="businessName != null and businessName != ''">
+            AND business_name = #{businessName}
+        </if>
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
+        <if test="jobOwner != null and jobOwner != ''">
+            AND job_owner = #{jobOwner}
+        </if>
+        <if test="department != null">
+            AND department = #{department}
+        </if>
+        ORDER BY id DESC
+        LIMIT #{pageSize}
+    </select>
+
+    <select id="queryJobInfoByName" parameterType="JobInfo" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE business_name = #{businessName}
+        AND name = #{name}
+        LIMIT 1
+    </select>
+
+    <select id="queryUnFinishJobInfo" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        <![CDATA[ WHERE is_valid = 1 AND execute_date < now()-interval 900 second
+        ]]>
+        LIMIT 100
+    </select>
+
+    <!-- 查询执行器ip包含指定ip的job -->
+    <select id="queryJobInfoByExecutorIp" parameterType="string" resultType="JobInfo">
+        SELECT
+        <include refid="baseColumn" />
+        FROM job_info
+        WHERE find_in_set(#{executorIp}, executor_ips)
+    </select>
+
+    <!-- delete -->
+    <delete id="deleteJobInfoByName" parameterType="JobInfo">
+        DELETE FROM job_info
+        WHERE business_name = #{businessName}
+        AND name = #{name}
+    </delete>
+
+    <!-- delete -->
+    <delete id="deleteById" parameterType="JobInfo">
+        DELETE FROM job_info
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
