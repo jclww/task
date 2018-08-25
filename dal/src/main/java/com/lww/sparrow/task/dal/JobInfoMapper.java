@@ -5,13 +5,12 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface JobInfoMapper {
 
     long insert(JobInfo jobInfo);
 
-    long updateDateAndRetryById(@Param("id") long id, @Param("executeDate") Date executeDate, @Param("retryCount") int retryCount);
+    long updateExecuteDateById(@Param("id") long id, @Param("executeDate") Date executeDate);
 
     JobInfo getById(@Param("id") long id);
 
@@ -19,33 +18,15 @@ public interface JobInfoMapper {
 
     List<JobInfo> findAll();
 
-    List<JobInfo> findByOwner(String username);
-
     List<JobInfo> queryByUntilDateAndBatch(@Param("untilDate") Date executeDate, @Param("limit") int batchSize);
 
-    Date queryRecentlyExecuteDate(@Param("startDate") Date startDate);
+    List<JobInfo> scanJob(@Param("startDate") Date startDate, @Param("nowDate") Date nowDate, @Param("limit") int batchSize);
 
-    List<JobInfo> queryJobInfoForWeb(Map<String, Object> map);
-
-    List<JobInfo> queryJobInfoByExecutorIp(String executorIp);
-
-    void updateAllColumnById(JobInfo jobInfo);
+    Date findNextExecuteTime(Date date);
 
     void updateById(JobInfo jobInfo);
 
     void updateIsValidById(@Param("id") long id, @Param("isValid") int isValid);
-
-    int updateOwnerById(@Param("id") long id, @Param("jobOwner") String jobOwner);
-
-    int updateDeptById(@Param("id") long id, @Param("department") String department);
-
-    int updateOwnerAndDeptById(@Param("id") long id, @Param("jobOwner") String jobOwner, @Param("department") String department);
-
-    JobInfo queryJobInfoByName(JobInfo jobInfo);
-
-    void deleteJobInfoByName(JobInfo jobInfo);
-
-    void deleteById(long id);
 
     List<JobInfo> queryUnFinishJobInfo();
 }

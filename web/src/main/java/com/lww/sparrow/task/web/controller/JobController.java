@@ -18,7 +18,7 @@ public class JobController {
     @RequestMapping(value="/", method = RequestMethod.POST)
     @ResponseBody
     public JobInfo addJob(String username, @RequestBody JobInfo job) {
-        job.setJobOwner(username);
+//        job.setExecuteUrl(username);
         jobInfoService.insert(job);
         return job;
     }

@@ -24,6 +24,7 @@
         <typeAlias alias="Date" type="java.util.Date" />
 
         <typeAlias alias="JobInfo" type="com.lww.sparrow.task.domain.entity.JobInfo"/>
+        <typeAlias alias="JobLog" type="com.lww.sparrow.task.domain.entity.JobExecuteLog"/>
 
     </typeAliases>
 </configuration>

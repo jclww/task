@@ -13,10 +13,16 @@
 
     <dependencies>
         <dependency>
-        <groupId>com.lww.sparrow.task</groupId>
-        <artifactId>service</artifactId>
-        <version>${project.version}</version>
-    </dependency>
+            <groupId>com.lww.sparrow.task</groupId>
+            <artifactId>service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lww.sparrow.task</groupId>
+            <artifactId>executor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

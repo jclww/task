@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lww.sparrow.task.dal.JobLogMapper">
+
+
+    <sql id="baseColumn">
+        id,
+        job_id as jobId,
+        executor_count as executorDount,
+        execute_date as executeDate,
+        expression_date as expressionDate,
+        state as state,
+        response as response,
+        scan_date as scanDate,
+        send_date as sendDate,
+        addqueue_date as addqueueDate,
+        execute_url as executeUrl,
+    </sql>
+
+
+    <!-- insert -->
+    <insert id="insert" parameterType="JobLog">
+        <![CDATA[
+	  	INSERT INTO job_execute_log(
+    	  	job_id,
+            executor_count,
+            execute_date,
+            expression_date,
+            state,
+            response,
+            scan_date,
+            send_date,
+            addqueue_date,
+            execute_url
+	  	)VALUES(
+	  	    #{jobId},
+            #{executorDount},
+            #{executeDate},
+            #{expressionDate},
+            #{state},
+            #{response},
+            #{scanDate},
+            #{sendDate},
+            #{addqueueDate},
+            #{executeUrl}
+	  	)
+  	]]>
+        <selectKey resultType="long" keyProperty="id">
+            SELECT @@Identity as id
+        </selectKey>
+    </insert>
+
+</mapper>
