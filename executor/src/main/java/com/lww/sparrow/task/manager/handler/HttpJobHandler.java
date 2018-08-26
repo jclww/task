@@ -1,7 +1,6 @@
 package com.lww.sparrow.task.manager.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.lww.sparrow.task.dal.JobInfoMapper;
 import com.lww.sparrow.task.dal.JobLogMapper;
 import com.lww.sparrow.task.domain.bean.JobExecuteLogBean;
 import com.lww.sparrow.task.domain.entity.JobExecuteLog;
@@ -16,6 +15,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 线程是自己new的 所以无法使用 spring 的注入
+ */
 public class HttpJobHandler extends JobHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(HttpJobHandler.class);
 
@@ -23,12 +25,12 @@ public class HttpJobHandler extends JobHandler implements Runnable {
     @Resource
     private OrikaBeanUtil orikaBeanUtil;
     @Resource
-    private JobInfoMapper jobInfoMapper;
-    @Resource
     private JobLogMapper jobLogMapper;
 
-    public HttpJobHandler(JobExecuteLogBean jobInfo) {
+    public HttpJobHandler(JobExecuteLogBean jobInfo, OrikaBeanUtil orikaBeanUtil, JobLogMapper jobLogMapper) {
         this.jobInfo = jobInfo;
+        this.orikaBeanUtil = orikaBeanUtil;
+        this.jobLogMapper = jobLogMapper;
     }
 
     @Override
@@ -56,12 +58,13 @@ public class HttpJobHandler extends JobHandler implements Runnable {
         try {
             response = HttpClientUtil.request(job.getExecuteUrl(), headers);
         } catch (Exception e) {
-            logger.error("job:{} send fail exception:", JSON.toJSONString(job), e);
+            logger.error("job:{} send fail exception:{}", JSON.toJSONString(job), e.getMessage());
         }
         if (response == null || HttpClientUtil.OK != response.getStatus()) {
             if (retry < job.getRetryCount())  {
-                return handler(job, retry++);
+                return handler(job, ++retry);
             } else {
+                job.setResponse(String.format("retry %s times, still fail", retry));
                 logger.info("job:{} retry:{} still fail", retry);
                 return false;
             }
@@ -74,9 +77,6 @@ public class HttpJobHandler extends JobHandler implements Runnable {
     boolean changeJobInfoAndLog(JobExecuteLogBean job, boolean sendSuccess) {
         JobExecuteLog jobExecuteLog = orikaBeanUtil.convert(job, JobExecuteLog.class);
         jobExecuteLog.setState(sendSuccess ? 1 : 2);
-        CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(job.getTimeExpression());
-        Date nextTriggerTime = cronSequenceGenerator.next(job.getExpressionDate());
-        jobInfoMapper.updateExecuteDateById(job.getJobId(), nextTriggerTime);
         jobLogMapper.insert(jobExecuteLog);
         return true;
     }
@@ -90,10 +90,6 @@ public class HttpJobHandler extends JobHandler implements Runnable {
         System.out.println(nextTriggerTime.getTime());
         nextTriggerTime = cronSequenceGenerator.next(new Date(nextTriggerTime.getTime()));
         System.out.println(nextTriggerTime.getTime());
-
-
-
-
 
     }
 }

@@ -30,6 +30,7 @@ public class JobController {
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     @ResponseBody
     public String hello() {
+        log.info("hello");
         return "hello";
     }
 }

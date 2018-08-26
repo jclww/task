@@ -1,6 +1,5 @@
 package com.lww.sparrow.task.domain.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,6 +18,8 @@ public class JobInfo implements Serializable {
     private String timeExpression;
     private String submitIp;
     private Date executeDate;
+    private Date createDate;
+    private Date updateDate;
     private String executeUrl;
     private Integer isValid;
     private Integer retryCount;

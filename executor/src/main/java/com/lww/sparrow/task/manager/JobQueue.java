@@ -113,7 +113,9 @@ public class JobQueue {
         try {
             jobQueueBean = jobQueueBeans.poll();
             if (jobQueueBean == null) {
+                logger.info("poll i`m sleep ");
                 CAN_GET.await();
+                logger.info("poll i`m  signal");
                 jobQueueBean = poll();
             }
         } catch (InterruptedException e) {
@@ -130,6 +132,9 @@ public class JobQueue {
      * @return
      */
     public  boolean offer(JobQueueBean jobQueueBean) {
+        if (jobQueueBean == null) {
+            return false;
+        }
         LOCK.lock();
         boolean success = jobQueueBeans.offer(jobQueueBean);
         if (success) {

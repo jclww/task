@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
     <mapper namespace="com.lww.sparrow.task.dal.JobInfoMapper">
-
     <sql id="baseColumn">
         id,
         job_name as jobName,
@@ -12,8 +11,21 @@
         execute_date as executeDate,
         is_valid as isValid,
         create_date as createDate,
-        update_date as updateDate,
+        update_date AS updateDate
     </sql>
+
+    <resultMap id="jobInfoResultMap" type="com.lww.sparrow.task.domain.entity.JobInfo">
+        <id column="id" property="id"/>
+        <result column="job_name"  property="jobName"/>
+        <result column="retry_count"  property="retryCount"/>
+        <result column="time_expression"  property="timeExpression"/>
+        <result column="submit_ip"  property="submitIp"/>
+        <result column="execute_url"  property="executeUrl"/>
+        <result column="execute_date"  property="executeDate"/>
+        <result column="is_valid"  property="isValid"/>
+        <result column="create_date"  property="createDate"/>
+        <result column="update_date"  property="updateDate"/>
+    </resultMap>
 
     <!-- insert -->
     <insert id="insert" parameterType="JobInfo">
@@ -88,11 +100,13 @@
         LIMIT #{limit}
     </select>
 
-    <select id="scanJob" resultType="JobInfo">
-        SELECT execute_date
+    <!-- resultType="JobInfo"-->
+    <select id="scanJob" resultMap="jobInfoResultMap">
+        SELECT *
+        <!--<include refid="baseColumn" />-->
         FROM job_info
         WHERE execute_date<![CDATA[>]]>#{startDate}
-        AND execute_date<![CDATA[<=]]>#{startDate}
+        AND execute_date<![CDATA[<=]]>#{nowDate}
         AND is_valid=1
         ORDER BY execute_date
         LIMIT #{limit}

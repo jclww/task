@@ -5,6 +5,7 @@ import com.lww.sparrow.task.dal.JobInfoMapper;
 import com.lww.sparrow.task.domain.entity.JobInfo;
 import com.lww.sparrow.task.domain.util.OrikaBeanUtil;
 import com.lww.sparrow.task.domain.bean.JobQueueBean;
+import com.lww.sparrow.task.service.job.JobInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class JobScanService {
 
     @Resource
     private JobInfoMapper jobInfoMapper;
+    @Resource
+    private JobInfoService jobInfoService;
     @Resource
     private JobQueue jobQueue;
     @Resource
@@ -78,7 +81,7 @@ public class JobScanService {
         while (isRunning.get()) {
             Date endDate = new Date();
             while (true) {
-                List<JobInfo> jobInfos = jobInfoMapper.scanJob(new Date(startDate.get()), endDate, BATCH_SIZE);
+                List<JobInfo> jobInfos = jobInfoService.scanJobAndUpdateNextTime(new Date(startDate.get()), endDate, BATCH_SIZE);
                 if (CollectionUtils.isEmpty(jobInfos)) {
                     break;
                 }

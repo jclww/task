@@ -13,9 +13,14 @@
 
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.lww.sparrow.task</groupId>-->
+            <!--<artifactId>dal</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.lww.sparrow.task</groupId>
-            <artifactId>dal</artifactId>
+            <artifactId>service</artifactId>
             <version>${project.version}</version>
         </dependency>
 

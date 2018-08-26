@@ -6,7 +6,7 @@
     <sql id="baseColumn">
         id,
         job_id as jobId,
-        executor_count as executorDount,
+        executor_count as executorCount,
         execute_date as executeDate,
         expression_date as expressionDate,
         state as state,
@@ -34,7 +34,7 @@
             execute_url
 	  	)VALUES(
 	  	    #{jobId},
-            #{executorDount},
+            #{executorCount},
             #{executeDate},
             #{expressionDate},
             #{state},
@@ -45,9 +45,6 @@
             #{executeUrl}
 	  	)
   	]]>
-        <selectKey resultType="long" keyProperty="id">
-            SELECT @@Identity as id
-        </selectKey>
     </insert>
 
 </mapper>
