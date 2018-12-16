@@ -64,7 +64,7 @@ public class JobScanService {
      */
     @PostConstruct
     public void start() {
-        new Thread(() -> scanThreadRun()).start();
+        new Thread(this::scanThreadRun).start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info(".................. jobScan stop ..................");
             isRunning.set(false);
@@ -120,11 +120,11 @@ public class JobScanService {
                 }
             } catch (Throwable e) {
                 throwable = e;
-            } finally {
-                LOCK.unlock();
             }
         } catch (Throwable e) {
             throwable = e;
+        } finally {
+            LOCK.unlock();
         }
         if (throwable != null) {
             logger.error("threadWait exception:", throwable);

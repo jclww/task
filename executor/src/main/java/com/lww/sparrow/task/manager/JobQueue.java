@@ -119,7 +119,7 @@ public class JobQueue {
                 jobQueueBean = poll();
             }
         } catch (InterruptedException e) {
-            logger.error("peek await exception:", e);
+            logger.error("poll await exception:", e);
         } finally {
             LOCK.unlock();
         }

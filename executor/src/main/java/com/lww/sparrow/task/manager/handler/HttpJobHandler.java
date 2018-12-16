@@ -65,7 +65,7 @@ public class HttpJobHandler extends JobHandler implements Runnable {
                 return handler(job, ++retry);
             } else {
                 job.setResponse(String.format("retry %s times, still fail", retry));
-                logger.info("job:{} retry:{} still fail", retry);
+                logger.info("job:{} retry:{} still fail", job.getJobId(), retry);
                 return false;
             }
         }

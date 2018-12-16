@@ -40,7 +40,7 @@ public class JobDispatcherService {
 
     @PostConstruct
     public void start() {
-        new Thread(() -> dispatcherThreadRun()).start();
+        new Thread(this::dispatcherThreadRun).start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER_DISPATCHER.info(".................. dispatcher stop ..................");
             isRunning.set(false);
