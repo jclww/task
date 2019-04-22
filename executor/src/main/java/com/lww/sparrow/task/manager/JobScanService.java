@@ -2,9 +2,9 @@ package com.lww.sparrow.task.manager;
 
 import com.alibaba.fastjson.JSON;
 import com.lww.sparrow.task.dal.JobInfoMapper;
+import com.lww.sparrow.task.domain.bean.JobQueueBean;
 import com.lww.sparrow.task.domain.entity.JobInfo;
 import com.lww.sparrow.task.domain.util.OrikaBeanUtil;
-import com.lww.sparrow.task.domain.bean.JobQueueBean;
 import com.lww.sparrow.task.service.job.JobInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
